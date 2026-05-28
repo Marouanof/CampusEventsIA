@@ -4,13 +4,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './src/context/AuthContext';
 import AppNavigator from './src/navigation/AppNavigator';
 import { initDatabase } from './src/database/init';
-import { seedIfEmpty, addExtraEvents } from './src/database/seed';
+import { seedIfEmpty, addExtraEvents, updateRegisteredCounts } from './src/database/seed';
 
 export default function App() {
   useEffect(() => {
     initDatabase();
     seedIfEmpty();
     addExtraEvents();
+    updateRegisteredCounts();
   }, []);
 
   return (

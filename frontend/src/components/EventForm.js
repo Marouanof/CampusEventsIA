@@ -78,7 +78,7 @@ export default function EventForm({ event, onSubmit, onCancel }) {
         ? parseUTCDate(endDate.trim(), endTime.trim())
         : parseUTCDate(endDate.trim(), '23:59');
       if (isNaN(endTs)) { Alert.alert('Erreur', 'Date ou heure de fin invalide'); return; }
-      if (endTs <= startTs) {
+      if (endTs < startTs) {
         Alert.alert('Erreur', 'La fin doit être après le début (date et heure)');
         return;
       }

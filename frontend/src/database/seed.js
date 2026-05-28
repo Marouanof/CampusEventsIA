@@ -218,6 +218,29 @@ export function addExtraEvents() {
   }
 }
 
+const ALL_SEED = [
+  ...SAMPLE_EVENTS,
+  { title: 'Test Inscription Rapid', registeredCount: 0 },
+  { title: 'Conference Complet', registeredCount: 50 },
+  { title: 'Hackathon Cybersécurité', registeredCount: 25 },
+  { title: 'Introduction au Web Development', registeredCount: 55 },
+  { title: 'Cours d\'Anglais Technique', registeredCount: 30 },
+  ...MORE_EVENTS,
+]
+
+export function updateRegisteredCounts() {
+  const db = getDb()
+  const byTitle = {}
+  for (const ev of ALL_SEED) {
+    if (ev.registeredCount !== undefined && ev.registeredCount > 0) {
+      byTitle[ev.title] = ev.registeredCount
+    }
+  }
+  for (const [title, count] of Object.entries(byTitle)) {
+    db.runSync('UPDATE events SET registeredCount = ? WHERE title = ? AND registeredCount = 0', [count, title])
+  }
+}
+
 export function seedIfEmpty() {
   const db = getDb()
 

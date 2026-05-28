@@ -2,6 +2,10 @@
 
 > **Agenda universitaire intelligent** — Gérez vos événements, inscriptions et favoris, le tout propulsé par un assistant IA.
 
+<p align="center">
+  <img src="images/pagedelogin.jpeg" alt="Page de connexion" width="250"/>
+</p>
+
 ![Expo SDK](https://img.shields.io/badge/Expo_SDK-54-000020?logo=expo)
 ![React Native](https://img.shields.io/badge/React_Native-0.81-61DAFB?logo=react)
 ![Express](https://img.shields.io/badge/Backend-Express.js-000000?logo=express)
