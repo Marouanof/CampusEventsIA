@@ -37,6 +37,7 @@ export function initDatabase() {
       userId TEXT NOT NULL,
       createdAt TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'confirmed',
+      notificationId TEXT,
       FOREIGN KEY (eventId) REFERENCES events(id)
     );
 
@@ -64,6 +65,14 @@ export function initDatabase() {
       year TEXT,
       interests TEXT,
       updatedAt TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      role TEXT NOT NULL DEFAULT 'student',
+      avatarColor TEXT
     );
   `)
 }

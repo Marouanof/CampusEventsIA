@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
         apiKey: process.env.GROQ_API_KEY,
         baseURL: 'https://api.groq.com/openai/v1',
       });
-      const { model = 'llama-3.3-70b-versatile', max_tokens = 800, temperature = 0.3 } = req.body.options || {};
+      const { model = 'qwen/qwen3.8-27b', max_tokens = 800, temperature = 0.3 } = req.body.options || {};
 
       const completion = await groq.chat.completions.create({
         model,

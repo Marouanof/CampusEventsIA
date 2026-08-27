@@ -4,6 +4,21 @@ function now() {
   return new Date().toISOString()
 }
 
+function parseTags(raw) {
+  if (!raw) return null
+  try {
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : raw
+  } catch {
+    return raw
+  }
+}
+
+function mapRow(row) {
+  if (!row) return null
+  return { ...row, tags: parseTags(row.tags) }
+}
+
 export function getFavorites(userId) {
   const db = getDb()
   return db.getAllSync(
@@ -12,7 +27,7 @@ export function getFavorites(userId) {
      WHERE f.userId = ?
      ORDER BY f.createdAt DESC`,
     [userId]
-  )
+  ).map(mapRow)
 }
 
 export function addFavorite(eventId, userId) {

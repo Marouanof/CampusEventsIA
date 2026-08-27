@@ -1,7 +1,7 @@
 import { api } from './api'
 
 const MAX_CONTEXT_CHARS = 6000
-const MODEL = 'llama-3.3-70b-versatile'
+const MODEL = 'qwen/qwen3.8-27b'
 const MAX_TOKENS = 800
 const TEMPERATURE = 0.3
 
@@ -30,15 +30,21 @@ function formatEventsJSON(events) {
  */
 export function limitContext(eventsJson, maxChars = MAX_CONTEXT_CHARS) {
   if (eventsJson.length <= maxChars) return eventsJson
-  const lines = eventsJson.split('\n')
-  let result = ''
-  for (const line of lines) {
-    if ((result + line + '\n').length > maxChars) {
-      result += '\n  // ... tronqué'
+
+  const events = JSON.parse(eventsJson)
+  let result = '['
+  for (let i = 0; i < events.length; i++) {
+    const entry = JSON.stringify(events[i], null, 2)
+    const separator = i === 0 ? '\n' : ',\n'
+    if ((result + separator + entry + '\n]').length > maxChars) {
+      if (i === 0) {
+        result += '\n' + entry
+      }
       break
     }
-    result += line + '\n'
+    result += separator + entry
   }
+  result += '\n]'
   return result
 }
 

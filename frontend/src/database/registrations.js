@@ -5,16 +5,40 @@ function now() {
   return new Date().toISOString()
 }
 
+function parseTags(raw) {
+  if (!raw) return null
+  try {
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : raw
+  } catch {
+    return raw
+  }
+}
+
+function mapRow(row) {
+  if (!row) return null
+  return { ...row, tags: parseTags(row.tags) }
+}
+
 export function getRegistrations(userId) {
   const db = getDb()
   return db.getAllSync(
-    `SELECT e.*, r.status as registrationStatus, r.createdAt as registeredAt
+    `SELECT e.*, r.status as registrationStatus, r.createdAt as registeredAt, r.notificationId
      FROM events e
      INNER JOIN registrations r ON r.eventId = e.id
      WHERE r.userId = ?
      ORDER BY r.createdAt DESC`,
     [userId]
+  ).map(mapRow)
+}
+
+export function getRegistrationNotificationId(eventId, userId) {
+  const db = getDb()
+  const row = db.getFirstSync(
+    'SELECT notificationId FROM registrations WHERE eventId = ? AND userId = ?',
+    [eventId, userId]
   )
+  return row ? row.notificationId : null
 }
 
 export function registerForEvent(eventId, userId) {
@@ -46,6 +70,14 @@ export function registerForEvent(eventId, userId) {
   return true
 }
 
+export function updateRegistrationNotificationId(eventId, userId, notificationId) {
+  const db = getDb()
+  db.runSync(
+    'UPDATE registrations SET notificationId = ? WHERE eventId = ? AND userId = ?',
+    [notificationId, eventId, userId]
+  )
+}
+
 export function unregisterFromEvent(eventId, userId) {
   const db = getDb()
   db.runSync(
@@ -56,15 +88,6 @@ export function unregisterFromEvent(eventId, userId) {
     'UPDATE events SET registeredCount = MAX(0, registeredCount - 1) WHERE id = ?',
     [eventId]
   )
-}
-
-export function isRegistered(eventId, userId) {
-  const db = getDb()
-  const row = db.getFirstSync(
-    'SELECT 1 FROM registrations WHERE eventId = ? AND userId = ?',
-    [eventId, userId]
-  )
-  return !!row
 }
 
 export function isEventFull(eventId) {
@@ -80,5 +103,3 @@ export function isEventFull(eventId) {
 export function isEventPast(startDateTime) {
   return new Date(startDateTime) < new Date()
 }
-
-
